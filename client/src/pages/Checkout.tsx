@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,7 +27,7 @@ interface PrintSummary {
 }
 
 const Checkout = () => {
-  const navigate = useNavigate();
+  const [, setRoute] = useLocation();
   const [cartItems, setCartItems] = useState<PrintSummary[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
@@ -75,7 +75,9 @@ const Checkout = () => {
     localStorage.setItem('orders', JSON.stringify([...existingOrders, orderData]));
 
     // Clear cart and navigate to confirmation
-    navigate("/order-confirmation", { state: orderData });
+    // Store order data for the confirmation page
+    localStorage.setItem('orderConfirmation', JSON.stringify(orderData));
+    setRoute("/order-confirmation");
     localStorage.setItem('printCart', JSON.stringify([]));
     window.dispatchEvent(new Event('cartUpdated'));
   };

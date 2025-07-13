@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,7 +26,7 @@ interface UserProfile {
 }
 
 const Account = () => {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   
@@ -68,15 +68,15 @@ const Account = () => {
       } catch (error) {
         console.error("Failed to parse user data", error);
         // Invalid user data, redirect to login
-        navigate("/login");
+        setLocation("/login");
       }
     } else {
       // No user found, redirect to login
-      navigate("/login");
+      setLocation("/login");
     }
     
     setLoading(false);
-  }, [navigate]);
+  }, [setLocation]);
   
   const handleLogout = () => {
     // Clear user data from localStorage
@@ -91,7 +91,7 @@ const Account = () => {
     });
     
     // Redirect to home
-    navigate("/");
+    setLocation("/");
   };
   
   const handleUpdateProfile = (e: React.FormEvent) => {
@@ -186,7 +186,7 @@ const Account = () => {
   }
   
   if (!user) {
-    navigate("/login");
+    setLocation("/login");
     return null;
   }
   
@@ -288,7 +288,7 @@ const Account = () => {
                     <Button 
                       variant="outline" 
                       className="mt-4"
-                      onClick={() => navigate("/track-order")}
+                      onClick={() => setLocation("/track-order")}
                     >
                       <Truck className="mr-2 h-4 w-4" />
                       Track an Order

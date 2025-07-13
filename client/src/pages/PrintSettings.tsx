@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import {
   Card,
   CardContent,
@@ -33,9 +33,11 @@ interface RelatedProduct {
 }
 
 const PrintSettings: React.FC<PrintSettingsProps> = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { fileCount = 1, totalPages = 5 } = location.state || {};
+  const [, setRoute] = useLocation();
+  
+  // Get uploaded files data from localStorage (since wouter doesn't pass state like React Router)
+  const uploadedData = JSON.parse(localStorage.getItem('uploadedFiles') || '{}');
+  const { fileCount = 1, totalPages = 5 } = uploadedData;
 
   const [paperType, setPaperType] = useState("standard");
   const [printType, setPrintType] = useState("bw");
@@ -296,7 +298,10 @@ const PrintSettings: React.FC<PrintSettingsProps> = () => {
     });
     
     // Navigate to cart page after adding to cart
-    navigate("/cart");
+    // Dispatch event to update cart count in navbar
+    window.dispatchEvent(new Event('cartUpdated'));
+    
+    setRoute("/cart");
   };
 
   const incrementCopies = () => {
@@ -316,7 +321,7 @@ const PrintSettings: React.FC<PrintSettingsProps> = () => {
     });
     
     // Navigate to home page with a category query parameter
-    navigate("/?category=stationery");
+    setRoute("/?category=stationery");
   };
 
   const renderStars = (rating: number) => {
@@ -591,7 +596,7 @@ const PrintSettings: React.FC<PrintSettingsProps> = () => {
           </div>
           
           <div className="flex justify-between mt-6">
-            <Button variant="outline" onClick={() => navigate("/upload")}>
+            <Button variant="outline" onClick={() => setRoute("/upload")}>
               Back
             </Button>
           </div>

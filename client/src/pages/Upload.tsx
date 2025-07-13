@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload as UploadIcon, FileText, FileImage } from "lucide-react";
@@ -12,7 +12,7 @@ interface FileWithPages extends File {
 }
 
 const Upload = () => {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<FileWithPages[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -139,12 +139,12 @@ const Upload = () => {
 
     // Navigate to print settings with actual page count
     toast.success("Files ready for printing");
-    navigate("/print-settings", { 
-      state: { 
-        fileCount: files.length, 
-        totalPages: totalPageCount 
-      }
-    });
+    // For wouter, we need to pass state differently - using localStorage for now
+    localStorage.setItem('uploadedFiles', JSON.stringify({
+      fileCount: files.length,
+      totalPages: totalPageCount
+    }));
+    setLocation("/print-settings");
   };
 
   const getFileIcon = (file: File) => {
@@ -245,7 +245,7 @@ const Upload = () => {
           )}
           
           <div className="flex justify-between">
-            <Button variant="outline" onClick={() => navigate("/")}>
+            <Button variant="outline" onClick={() => setLocation("/")}>
               Cancel
             </Button>
             <Button onClick={handleContinue} disabled={files.length === 0 || isCountingPages}>

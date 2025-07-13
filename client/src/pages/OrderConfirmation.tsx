@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useLocation, Link } from "react-router-dom";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,8 +15,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const OrderConfirmation = () => {
-  const location = useLocation();
-  const orderDetails = location.state || {
+  // Get order details from localStorage (since wouter doesn't pass state like React Router)
+  const orderDetails = JSON.parse(localStorage.getItem('orderConfirmation') || '{}') || {
     orderId: "Unknown",
     orderItems: [],
     subtotal: 0,
